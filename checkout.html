@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>FocusGuard — Checkout</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #0d0d0d; color: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    text-align: center;
+  }
+  .wrap { max-width: 380px; padding: 40px 24px; }
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid #2a2a2a; border-top-color: #c8f135;
+    border-radius: 50%; margin: 0 auto 24px; animation: spin 0.8s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  h1 { font-size: 18px; margin-bottom: 10px; }
+  p { color: #888; font-size: 13px; line-height: 1.6; }
+  .error { display: none; color: #ff5555; margin-top: 16px; font-size: 13px; }
+  .retry-btn {
+    display: none; margin-top: 20px; background: #c8f135; color: #0d0d0d;
+    border: none; font-weight: 700; font-size: 12px; padding: 10px 24px;
+    border-radius: 8px; cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="emailStep">
+    <h1 style="margin-bottom: 14px;">One quick thing</h1>
+    <p style="margin-bottom: 20px;">Enter your email so we can find your subscription if you ever need to cancel or get support.</p>
+    <input type="email" id="emailInput" placeholder="you@email.com"
+      style="width:100%; background:#181818; border:1px solid #2a2a2a; color:#f0f0f0; font-size:14px; padding:12px 16px; border-radius:10px; outline:none; margin-bottom:14px; box-sizing:border-box;" />
+    <button id="continueBtn"
+      style="width:100%; background:#c8f135; color:#0d0d0d; border:none; font-weight:700; font-size:13px; padding:13px; border-radius:10px; cursor:pointer;">
+      Loading payment system…
+    </button>
+    <p id="emailError" style="display:none; color:#ff5555; font-size:12px; margin-top:10px;"></p>
+  </div>
+
+  <div id="checkoutStep" style="display:none;">
+    <div class="spinner" id="spinner" style="display:block;"></div>
+    <h1 id="statusTitle">Opening secure checkout…</h1>
+    <p id="statusText">Please wait, this only takes a second.</p>
+    <p class="error" id="errorMsg"></p>
+    <button class="retry-btn" id="retryBtn">Try again</button>
+  </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="checkout.js"></script>
+</body>
+</html>
