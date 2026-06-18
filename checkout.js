@@ -3,12 +3,13 @@ const RAZORPAY_KEY_ID  = "rzp_test_T2q8mSzUmEi7DZ";
 const PLAN_ID_MONTHLY  = "plan_T2qE7Qcb03tAyK";
 const PLAN_ID_YEARLY   = "plan_T2qG8m2SPU0KdW";
 const LIFETIME_AMOUNT_INR_PAISE = 207400; // ₹2074
-const EXTENSION_ID = "YOUR_EXTENSION_ID_HERE"; // fill in after loading extension once
+const EXTENSION_ID = "beibpcgfacpcejcdcjacjoohnhnpeaoj";
 // ─────────────────────────────────────────────────────────
 
 const params = new URLSearchParams(location.search);
 const planType = params.get("plan") || "monthly";
 let userEmail = "";
+let paymentAlreadySucceeded = false;
 
 const titles = {
   monthly:  "FocusGuard Pro — Monthly",
@@ -61,6 +62,7 @@ continueBtn.addEventListener("click", () => {
 });
 
 function showError(msg) {
+  if (paymentAlreadySucceeded) return; // never show errors after a real success
   document.getElementById("spinner").style.display = "none";
   document.getElementById("statusTitle").textContent = "Couldn't open checkout";
   document.getElementById("statusText").style.display = "none";
@@ -102,12 +104,14 @@ function openCheckout() {
 
   const rzp = new Razorpay(options);
   rzp.on("payment.failed", function(response) {
+    if (paymentAlreadySucceeded) return; // ignore late/duplicate failure events
     showError("Payment failed: " + (response.error?.description || "Unknown error"));
   });
   rzp.open();
 }
 
 function onPaymentSuccess(response) {
+  paymentAlreadySucceeded = true;
   const subId = response.razorpay_subscription_id || response.razorpay_payment_id || "N/A";
 
   document.getElementById("statusTitle").textContent = "Payment successful! 🎉";
@@ -116,9 +120,13 @@ function onPaymentSuccess(response) {
     `<br><br>Save this — include it in any email to us if you ever need to cancel or get support.` +
     `<br><br>You can close this tab now.`;
   document.getElementById("spinner").style.display = "none";
+  document.getElementById("errorMsg").style.display = "none";
+  document.getElementById("retryBtn").style.display = "none";
 
   // Send result back to the extension (this page is NOT an extension page,
-  // so we use postMessage / chrome.runtime.sendMessage with the extension's ID)
+  // so we use chrome.runtime.sendMessage with the extension's ID — only
+  // works because the extension's manifest lists this domain under
+  // externally_connectable)
   try {
     if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage) {
       chrome.runtime.sendMessage(EXTENSION_ID, {
@@ -127,6 +135,10 @@ function onPaymentSuccess(response) {
         email: userEmail,
         paymentId: response.razorpay_payment_id || "",
         subscriptionId: response.razorpay_subscription_id || ""
+      }, (reply) => {
+        if (chrome.runtime.lastError) {
+          console.log("Extension message error (Pro may not auto-unlock):", chrome.runtime.lastError.message);
+        }
       });
     }
   } catch (e) {
