@@ -1,7 +1,7 @@
 // ─────────────────────────────────────────────────────────
-const RAZORPAY_KEY_ID  = "rzp_test_T2q8mSzUmEi7DZ";
-const PLAN_ID_MONTHLY  = "plan_T2qE7Qcb03tAyK";
-const PLAN_ID_YEARLY   = "plan_T2qG8m2SPU0KdW";
+const RAZORPAY_KEY_ID  = "rzp_live_T5kMrg46QGUDGL"; // ⚠️ TODO: replace with your live key rzp_live_T5kMrg46QGskjGL
+const PLAN_ID_MONTHLY  = "plan_T5kPe58itzg4UE"; // FocusGuard Pro Monthly (LIVE) — ₹207/mo
+const PLAN_ID_YEARLY   = "plan_T5kR4PXjqBeauq"; // FocusGuard Pro Yearly (LIVE) — ₹1659/yr
 const LIFETIME_AMOUNT_INR_PAISE = 207400; // ₹2074
 const EXTENSION_ID = "beibpcgfacpcejcdcjacjoohnhnpeaoj";
 // ─────────────────────────────────────────────────────────
